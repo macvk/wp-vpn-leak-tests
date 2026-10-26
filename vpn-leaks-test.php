@@ -3,8 +3,8 @@
 /*
 Plugin Name: VPN Leaks Test Package
 Plugin URI: https://bash.ws/
-Description: The plugin contains the leaks test package: DNS leak test, WEB rtc IP leak test, Email IP leak test. You can integrate these tests into your website.
-Version: 1.0.0
+Description: Add VPN, DNS, WebRTC, email and torrent leak tests, an open port test and an IP blacklist test to your website.
+Version: 1.0.0.22
 Author: macvk
 Author URI: https://github.com/macvk
 License: GPLv2 or later

@@ -2,7 +2,7 @@
 
 
 if ( !defined( 'ABSPATH' ) ) {
-	die( 'An attempt to call the plugin directly...' );
+	die( 'An attempt to call the vltp plugin directly...' );
 }
 
 add_action( 'init', 'vltp_admin_init' );
@@ -22,16 +22,21 @@ add_action( 'wp_ajax_vltp_get_progress_image', 'vltp_get_progress_image' );
  * @return null
 */
 function vltp_get_progress_image() {
-	if (isset($_REQUEST['id']) ){
-		$image = wp_get_attachment_image( filter_input( INPUT_GET, 'id', FILTER_VALIDATE_INT ), 'medium', false, array( 'id' => 'vltp_progress_image_preview' ) );
-		$data = array(
-			'image'    => $image,
-		);
-		wp_send_json_success( $data );
-	} 
-	else {
+	if ( !current_user_can( 'upload_files' ) ) {
+		wp_send_json_error( array( 'message' => __( 'You cannot access media files.', 'vpn-leaks-test' ) ), 403 );
+	}
+
+	if ( !check_ajax_referer( 'vltp_get_progress_image', 'nonce', false ) ) {
+		wp_send_json_error( array( 'message' => __( 'Invalid request.', 'vpn-leaks-test' ) ), 403 );
+	}
+
+	$image_id = isset( $_GET['id'] ) ? absint( wp_unslash( $_GET['id'] ) ) : 0;
+	if ( !$image_id ) {
 		wp_send_json_error();
 	}
+
+	$image = wp_get_attachment_image( $image_id, 'medium', false, array( 'id' => 'vltp_progress_image_preview' ) );
+	wp_send_json_success( array( 'image' => $image ) );
 }
 
 /**
@@ -50,7 +55,10 @@ function vltp_admin_media_files( $page ) {
 	wp_enqueue_media();
 	wp_enqueue_script( 'vltp-admin-script' );
 	
-	$translation_array = array( 'default_progress_image' => vltp_default_progress_image() );
+	$translation_array = array(
+		'default_progress_image' => vltp_default_progress_image(),
+		'media_nonce' => wp_create_nonce( 'vltp_get_progress_image' ),
+	);
 	wp_localize_script( 'vltp-admin-script', 'vltp_settings', $translation_array );
 
 	wp_enqueue_style( 'vltp-admin.css' );
@@ -62,7 +70,7 @@ function vltp_admin_media_files( $page ) {
 function vltp_admin_init()  {
 	add_action( 'admin_menu', 'vltp_admin_menu' );
 	wp_register_style( 'vltp-admin.css', plugin_dir_url( __FILE__ ) . '/include/vltp-admin.css' );
-	wp_register_script( 'vltp-admin-script', plugins_url( 'include/vltp-admin.js' , __FILE__ ), array('jquery'), '0.1' );
+	wp_register_script( 'vltp-admin-script', plugins_url( 'include/vltp-admin.js' , __FILE__ ), array('jquery'), '1.0.0.6' );
 }
 
 /**

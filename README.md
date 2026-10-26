@@ -5,6 +5,9 @@ The plugin contains the leaks test package:
 - WEB rtc IP leak test
 - Email IP leak test
 - Torrent IP leak test
+- Open port test
+- IP blacklist test
+- VPN leak test
 
 You can integrate these tests into your WordPress website.
 More information about the tests is available here https://bash.ws/.

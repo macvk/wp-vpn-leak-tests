@@ -1,4 +1,31 @@
 jQuery(document).ready( function($) {
+	var templates = {
+		ip: '<div>%ip <img src="%flag" /> %city_name %region_name %country_name %asn</div>',
+		openport: '<div>%port: %status</div>',
+		blacklist: '<div>%blacklist: %status</div>',
+		vpn: '<div>%label: %text</div>'
+	};
+
+	function update_patterns() {
+		var type = $('#vltp_type').val();
+		$('#vltp_patterns span[data-tests]').each(function() {
+			var pattern = $(this);
+			var tests = pattern.attr('data-tests').split(' ');
+			pattern.css('font-weight', tests.indexOf(type) != -1 ? 'bold' : '');
+		});
+	}
+
+	$('#vltp_type').change(update_patterns);
+	update_patterns();
+	$('#vltp_type').change(function() {
+		var result = $('#vltp_result');
+		var value = result.val();
+		if (value != templates.ip && value != templates.openport && value != templates.blacklist && value != templates.vpn) {
+			return;
+		}
+		var type = $(this).val();
+		result.val(templates[type] || templates.ip);
+	});
 
 	jQuery('input#vltp_progress_image_manager').click(function(e) {
 
@@ -55,7 +82,8 @@ jQuery(document).ready( function($) {
 function Refresh_Image(the_id) {
         var data = {
 		action: 'vltp_get_progress_image',
-		id: the_id
+		id: the_id,
+		nonce: vltp_settings.media_nonce
         };
 
 	jQuery.get(ajaxurl, data, function(response) {
