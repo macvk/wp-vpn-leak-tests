@@ -3,7 +3,7 @@ Contributors: macvk
 Tags: security,admin
 Requires at least: 4.7
 Requires PHP: 5.4
-Tested up to: 5.4
+Tested up to: 7.1
 Stable tag: 1.0.0.22
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
